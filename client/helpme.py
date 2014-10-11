@@ -13,10 +13,20 @@ def helpee(args):
     if not user or not machine:
         exit("Couldn't work out your user/machine. Seek help immediately.")
 
+    print "Sending for help..."
+
     params = {"action": "help", "id": user, "course": args.course,
         "location": machine, "duration": args.duration, "description": args.description}
-    r = requests.get(SERVER, params=params)
+    try:
+        r = requests.post(SERVER, params=params)
+    except requests.exceptions.RequestException:
+        exit("Something went wrong and we couldn't connect to the server, sorry :(")
     print r.text
+    #jsondata = r.json()
+    #if jsondata["status"] == "OK":
+    #    print "Help request submitted."
+    #else:
+    #    print "Sorry, help request not accepted. Reason: %s" % jsondata["status"]
 
 def run_command(command):
     child = subprocess.Popen("whoami", stdout=subprocess.PIPE)
@@ -35,7 +45,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("course", metavar="COURSE", help="The course you want help with, in the format COMP1234")
     parser.add_argument("--duration", "-t", metavar="t", default=60, help="Time your request will remain open, in minutes (default 60)")
-    parser.add_argument("--description", "-d", metavar="t", default=60, help="Time your request will remain open, in minutes (default 60)")
+    parser.add_argument("--description", "-d", metavar="\"<text>\"", default=60, help="Short description (to pass to your helpers)")
 
     args = parser.parse_args()
     helpee(args)
