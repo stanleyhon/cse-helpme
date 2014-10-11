@@ -22,6 +22,7 @@ def helpee(args):
     except requests.exceptions.RequestException:
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
     print r.text
+
     #jsondata = r.json()
     #if jsondata["status"] == "OK":
     #    print "Help request submitted."
@@ -29,7 +30,7 @@ def helpee(args):
     #    print "Sorry, help request not accepted. Reason: %s" % jsondata["status"]
 
 def run_command(command):
-    child = subprocess.Popen("whoami", stdout=subprocess.PIPE)
+    child = subprocess.Popen(command, stdout=subprocess.PIPE)
     return child.communicate()[0]
 
 def helper(args):
