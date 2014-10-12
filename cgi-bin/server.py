@@ -17,6 +17,9 @@ courses = ["COMP1917","COMP1927","COMP2121","COMP2911","COMP3331","COMP3821","CO
 print "Content-Type: text/html"
 print
 
+# Remove any expired jobs
+deactivate_expired_jobs()
+
 form = cgi.FieldStorage()
 
 if "action" not in form:

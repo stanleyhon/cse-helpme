@@ -1,9 +1,11 @@
 cse-helpme
 ==========
+Written by Stanley Hon (shon), Shannon Green & Brady Watkinson (bawa088)
 
 ## Disclaimer
 
-This is likely fairly bug-ridden, report bugs to shon@cse.unsw.edu.au and we'll fix em some time.
+This is likely fairly bug-ridden, report bugs to shon@cse.unsw.edu.au and we'll fix em some time,
+alternatively, raise them on the github issue tracker.
 
 This system also is not particularly secure, there is no real personal information or anything 
 of value worth stealing - but you could make it hard for people to find help or provide it.
@@ -17,7 +19,7 @@ and all cse-helpme users registered to help with that course will get a popup no
 
 If you want to help others in the labs, register the courses you can help with
 and anyone needing help with those courses will send you a popup notifying you of
-where they are and other useful information.
+which lab machine they are at and other useful information.
 
 ## Detail
 
@@ -110,4 +112,12 @@ If you want to see dismissed jobs, you can use the command:
 
      csehelp.py showall
 
+If you see someone you want to help in this list, simply invoke:
 
+     csehelp.py respond <user-id>
+
+Where user-id is the person who you want to help.
+
+## Known bugs
+
+- You get notifications for your own help requests if you have stated you can help with that course
