@@ -62,7 +62,7 @@ def insert_new_job(job):
     sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '"+user_id+"'"
     print sql
     conn.execute(sql)
-    sql = "INSERT INTO JOB_QUEUE VALUES('"+str(JOB_ID)+"',datetime('now','localtime'),'"+"','".join(job)+"')"
+    sql = "INSERT INTO JOB_QUEUE VALUES(NULL,datetime('now','localtime'),'"+"','".join(job)+"')"
     print sql
     conn.execute(sql)
     conn.commit()
@@ -79,7 +79,7 @@ def get_job_queue_for_user(user_id):
                     AND ACTIVE = 'YES'"""
         cursor = conn.execute(sql)
         for row in cursor:
-            job_queue.append("|".join(row))
+            job_queue.append("|".join(str(row)))
     return job_queue
 
 #===Get my job status===

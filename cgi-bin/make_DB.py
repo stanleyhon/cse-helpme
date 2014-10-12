@@ -1,4 +1,4 @@
-#!/usr/bin/python
+    #!/usr/bin/python
 
 import sqlite3
 
@@ -20,7 +20,7 @@ conn.execute('''
 conn.execute('''DROP TABLE IF EXISTS JOB_QUEUE''')
 conn.execute('''
 		CREATE TABLE IF NOT EXISTS JOB_QUEUE(
-		JOB_ID					TEXT PRIMARY KEY NOT NULL,
+		JOB_ID					INTEGER PRIMARY KEY,
 		TIME_START				DATETIME,
 		USERNAME 				TEXT,
 		REQUEST_DESCRIPTION	TEXT,
