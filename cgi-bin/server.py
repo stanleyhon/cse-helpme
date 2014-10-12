@@ -70,7 +70,7 @@ elif form["action"].value == "poll":
     # TODO: Look up skills of this guy
     # TODO: Look up applicable jobs for this guy
     # TODO: Send it
-    response = {"status" : "OK", "job1" : {"id" : "shon", "course" : "COMP1917", "expiry" : "136", "Location" : "drum07", "Description" : "im bad", "status" : "in progress"}}
+    response = {"status" : "OK", "jobs" : [{"id" : "shon", "course" : "COMP1917", "location" : "drum07", "description" : "im bad"}, {"id" : "sgreen", "course" : "COMP9242", "location" : "drum08", "description" : "your bad"}], "myjob" : {"status" : ", shon, johnnyg, emmaw"}}
     print json.dumps(response)
 
 # --- START ---
