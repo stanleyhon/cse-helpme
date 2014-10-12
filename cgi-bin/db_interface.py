@@ -35,15 +35,15 @@ def get_skills_for_user(id):
 
 #===Insert New User===
 def insert_new_user(user_id,skills):
-    sql = "DELETE FROM USERS WHERE USERNAME = '"+user_id+"'"
-    conn.execute(sql)
-    sql = "DELETE FROM SKILLS WHERE USERNAME = '"+user_id+"'"
-    conn.execute(sql)
-    sql = "INSERT INTO USERS VALUES('"+user_id+"')"
-    conn.execute(sql)
+    sql = "DELETE FROM USERS WHERE USERNAME = ?"
+    conn.execute(sql, (user_id,))
+    sql = "DELETE FROM SKILLS WHERE USERNAME = ?"
+    conn.execute(sql, (user_id,))
+    sql = "INSERT INTO USERS VALUES(?)"
+    conn.execute(sql, (user_id,))
     for skill in skills:
-        sql = "INSERT INTO SKILLS VALUES('"+user_id+"','"+skill+"')"
-        conn.execute(sql)
+        sql = "INSERT INTO SKILLS VALUES(?,?)"
+        conn.execute(sql, (user_id, skill))
     conn.commit()
 
 #===deactivate users===
@@ -55,8 +55,8 @@ def deactivate_expired_jobs():
 #===Make New Job===
 def insert_new_job(job):
     user_id = job[0]
-    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '"+user_id+"'"
-    conn.execute(sql)
+    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = ?"
+    conn.execute(sql, (user_id,))
     
     job[4] = str(job[4])
     sql = "INSERT INTO JOB_QUEUE VALUES(NULL,datetime('now','localtime'),'"+"','".join(job)+"')"
@@ -70,10 +70,10 @@ def get_job_queue_for_user(user_id):
     for skill in (get_skills_for_user(user_id)):
         sql = """SELECT *
                     FROM JOB_QUEUE
-                    WHERE COURSE_NAME = '""" + skill + """'
+                    WHERE COURSE_NAME = ?
                     AND (strftime('%s','now','localtime') - strftime('%s',TIME_START)) < TIME_LENGTH * 60
                     AND ACTIVE = 'YES'"""
-        cursor = conn.execute(sql)
+        cursor = conn.execute(sql, (skill,))
         for row in cursor:
             #print "|".join(row)
             job_queue.append("|".join([str(c) for c in row]))
@@ -81,8 +81,8 @@ def get_job_queue_for_user(user_id):
 
 #===Get my job status===
 def get_my_jobs_status(user_id):
-    sql = "SELECT RESPONDERS FROM JOB_QUEUE WHERE USERNAME = '" + user_id + "' AND ACTIVE = 'YES'"
-    cursor = conn.execute(sql)
+    sql = "SELECT RESPONDERS FROM JOB_QUEUE WHERE USERNAME = ? AND ACTIVE = 'YES'"
+    cursor = conn.execute(sql, (user_id,))
     status = ""
     for row in cursor:
         status += row[0]
@@ -96,9 +96,9 @@ def get_my_jobs_status(user_id):
 #===Check Job Exists===
 def check_job_queue_job_exists(job_user_id):
     sql = """SELECT * FROM JOB_QUEUE
-                WHERE USERNAME = '""" + job_user_id + """'
+                WHERE USERNAME = ?
                 AND ACTIVE = 'YES'"""
-    cursor = conn.execute(sql)
+    cursor = conn.execute(sql, (job_user_id,))
     bool = False
     for row in cursor:
         bool = True
@@ -106,20 +106,20 @@ def check_job_queue_job_exists(job_user_id):
 
 #===Update Job Queue Response===
 def update_job_queue_response(job_user_id, user_id):
-    sql = "SELECT RESPONDERS FROM JOB_QUEUE WHERE USERNAME = '" + job_user_id + "'AND ACTIVE = 'YES'"
-    cursor = conn.execute(sql)
+    sql = "SELECT RESPONDERS FROM JOB_QUEUE WHERE USERNAME = ? AND ACTIVE = 'YES'"
+    cursor = conn.execute(sql, (job_user_id,))
     status = ""
     for row in cursor:
         status += row[0]
     if status == "OK":
-        sql = "UPDATE JOB_QUEUE SET RESPONDERS = '" + user_id + "'WHERE USERNAME = '" + job_user_id + "'AND ACTIVE = 'YES'"
+        sql = "UPDATE JOB_QUEUE SET RESPONDERS = ? WHERE USERNAME = ? AND ACTIVE = 'YES'"
     else:
-        sql = "UPDATE JOB_QUEUE SET RESPONDERS = RESPONDERS || ', ' || '" + user_id + "'WHERE USERNAME = '" + job_user_id + "'AND ACTIVE = 'YES'"
-    cursor = conn.execute(sql)
+        sql = "UPDATE JOB_QUEUE SET RESPONDERS = RESPONDERS || ', ' || ? WHERE USERNAME = ? AND ACTIVE = 'YES'"
+    cursor = conn.execute(sql, (user_id, job_user_id))
     conn.commit()    
 
 #===Complete Job===
 def update_job_queue_queue_complete(job_user_id):
-    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '" + job_user_id + "'"
-    cursor = conn.execute(sql)
+    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = ?"
+    cursor = conn.execute(sql, (job_user_id,))
     conn.commit()    
