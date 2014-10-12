@@ -54,8 +54,23 @@ def helper_daemon(args):
         time.sleep(args.interval)
 
 def register(args):
+    user, machine = get_info()
+    print "Registering your specialties..."
 
-    pass
+    courses = ",".join(args.courses)
+    print courses
+
+    params = {"action": "start", "id": user, "courses": courses}
+    try:
+        r = requests.post(SERVER, params=params)
+    except requests.exceptions.RequestException:
+        exit("Something went wrong and we couldn't connect to the server, sorry :(")
+
+    jsondata = r.json()
+    if jsondata["status"] == "OK":
+        print "Registration accepted, thanks!"
+    else:
+        print "Sorry, registration not accepted. Reason: %s" % jsondata["status"]
 
 
 
@@ -81,7 +96,7 @@ if __name__ == "__main__":
     helperdaemon_parser.set_defaults(func=helper_daemon)
 
     helpedby_parser = subparsers.add_parser("register", help="Register as a helper")
-    helpedby_parser.add_argument("courses", metavar="COURSES", help="What courses can you help with?")
+    helpedby_parser.add_argument("courses", metavar="COURSES", nargs="+", help="What courses can you help with?")
     helpedby_parser.set_defaults(func=register)
 
 
