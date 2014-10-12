@@ -82,9 +82,8 @@ def register(args):
     print "Registering your specialties..."
 
     courses = ",".join(args.courses)
-    print courses
 
-    params = {"action": "start", "id": user, "courses": courses}
+    params = {"action": "start", "id": user, "skills": courses}
     try:
         r = requests.post(SERVER, params=params)
     except requests.exceptions.RequestException:
@@ -92,7 +91,7 @@ def register(args):
 
     jsondata = r.json()
     if jsondata["status"] == "OK":
-        print "Registration accepted, thanks!"
+        print "Registration accepted, thanks! \n\nTip: Make sure you have the daemon running to get notifications."
     else:
         print "Sorry, registration not accepted. Reason: %s" % jsondata["status"]
 
