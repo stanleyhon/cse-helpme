@@ -53,6 +53,10 @@ def helper_daemon(args):
         print >>sys.stderr, "Polling..."
         time.sleep(args.interval)
 
+def register(args):
+
+    pass
+
 
 
 if __name__ == "__main__":
@@ -75,6 +79,11 @@ if __name__ == "__main__":
     helperdaemon_parser = subparsers.add_parser("helper-daemon", help="Run the helper service")
     helperdaemon_parser.add_argument("--interval", "-i", default=30, metavar="wait", type=int, help="Poll every _wait_ seconds")
     helperdaemon_parser.set_defaults(func=helper_daemon)
+
+    helpedby_parser = subparsers.add_parser("register", help="Register as a helper")
+    helpedby_parser.add_argument("courses", metavar="COURSES", help="What courses can you help with?")
+    helpedby_parser.set_defaults(func=register)
+
 
     args = parser.parse_args()
     args.func(args)
