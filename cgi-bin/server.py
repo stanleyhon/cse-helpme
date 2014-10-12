@@ -82,7 +82,6 @@ elif form["action"].value == "poll":
     myStatus = sdaflkj()
             
     response = {"status" : "ok", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}  
-
     print json.dumps(response)
 
 # --- START ---

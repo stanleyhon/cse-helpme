@@ -69,22 +69,37 @@ def new_notification(jobid, course, location, description, jobsLeft):
     # don't know why return value is 1*256 but ok
     if returncode == 256: # This guy wants to assist.
         # TODO: Call assist on jobid
-        print "this guy wants to assist!"
+        respond(jobid)
 
 def new_info(message):
     os.system("xmessage %s" % message)
 
+def show_all(args):
+    user, _ = get_info()
+    params = {"action": "poll", "id": user}
+    try:
+        r = requests.get(SERVER, params=params)
+    except requests.exceptions.RequestException:
+        # Don't exit the daemon, just fail silently
+        exit("Something went wrong and we couldn't connect to the server, sorry :(")
+
+    jsondata = r.json()
+
+    if "jobs" in jsondata:
+        for job in jsondata["jobs"]:
+            print "- %s on %s wants help with %s" % (job["id"], job["location"], job["course"])
+            if job["description"]:
+                print "\t (\"%s\")" % job["description"]
 
 def helper_daemon(args):
     user, _ = get_info()
+    seen_jobs = []
+    fresh_jobs = []
+    all_jobs = []
+    myjob_old_status = ""
+    message = ""
 
     while True:
-        seen_jobs = []
-        fresh_jobs = []
-        all_jobs = []
-        myjob_old_status = ""
-        message = ""
-
         # Poll
         print >>sys.stderr, "Polling..."
 
@@ -95,14 +110,15 @@ def helper_daemon(args):
             # Don't exit the daemon, just fail silently
             pass
 
-        print >>sys.stderr, "Received data:"
+        #print >>sys.stderr, "Received data:"
         jsondata = r.json()
-        print jsondata
+        #print jsondata
 
         if "status" in jsondata and jsondata["status"] == "OK":
             # Keep track of fresh jobs and seen jobs
             fresh_jobs = [job for job in jsondata["jobs"] if job["id"] not in seen_jobs]
             seen_jobs = [job["id"] for job in jsondata["jobs"]]
+
 
             process_jobs(fresh_jobs)
 
@@ -112,7 +128,7 @@ def helper_daemon(args):
                 new_info("Good news - your help request was accepted by user(s) %s" % jsondata["myjob"]["status"][2:])
 
             # Watch the status of new messages
-            if jsondata["message"] and jsondata["message"] != message:
+            if "message" in jsondata and jsondata["message"] and jsondata["message"] != message:
                 message = jsondata["message"]
                 new_info(jsondata["messages"])
 
@@ -121,9 +137,17 @@ def helper_daemon(args):
 def process_jobs(fresh_jobs):
         # TODO: database needs to provide us with jobid, course, description, etc
         # Received a poll response
-
         for i, job in enumerate(fresh_jobs):
+            print "- %s " % job["id"]
             new_notification(job["id"], job["course"], job["location"], job["description"], len(fresh_jobs) - (i+1))
+
+def respond(job):
+    user, _ = get_info()
+    params = {"action": "repond", "id": user, "job": job}
+    try:
+        r = requests.post(SERVER, params=params)
+    except requests.exceptions.RequestException:
+        exit("Something went wrong and we couldn't connect to the server, sorry :(")
 
 def register(args):
     user, machine = get_info()
@@ -170,6 +194,8 @@ if __name__ == "__main__":
     helpedby_parser.add_argument("courses", metavar="COURSES", nargs="+", help="What courses can you help with?")
     helpedby_parser.set_defaults(func=register)
 
+    showall_parser = subparsers.add_parser("showall", help="Display all current help requests")
+    showall_parser.set_defaults(func=show_all)
 
     args = parser.parse_args()
     args.func(args)
