@@ -75,6 +75,8 @@ from the system by using the following command.
 If you do not remove the job, people may still come and try to help you - but the job will eventually
 expire.
 
+If you request help again, before your first job has expired, it will replace your first help request.
+
 ## Helping someone
 
 If you want to help people, make sure you install the script first, so you can receive
