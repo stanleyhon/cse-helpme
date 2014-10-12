@@ -11,7 +11,9 @@ def statusOK ():
     print json.dumps(response)
     exit()
 
-courses = ["COMP1917","COMP1927","COMP2121","COMP2911","COMP3331","COMP3821","COMP3891"]
+courses = ["COMP1917","COMP1927","COMP2121","COMP2911","COMP3331","COMP3821","COMP3891",
+           "COMP1911","COMP1921","COMP9242","COMP3231","COMP4128","COMP6771","COMP9243",
+           "COMP9447","COMP3421","COMP3311","COMP3121"]
 
 print "Content-Type: text/html"
 print
