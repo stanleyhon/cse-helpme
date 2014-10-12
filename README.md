@@ -44,6 +44,7 @@ It uses environment variables to figure out who you are, and where you are at CS
 ## I'm a judge and I want to demo this
 
 Hi there! You can't test this on your own because the system is designed not to show you your own requests. Here's what you'll need to do.
+
 0. Find at least one friend. Good luck. (If you can't do this, then you will need several CSE accounts)
 1. Be at CSE, on lab machines.
 2. Each person should run install steps as below.
