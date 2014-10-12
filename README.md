@@ -101,5 +101,6 @@ you are on the way. dismiss will hide the popup.
 
 If you want to see dismissed jobs, you can use the command:
 
-TBC
+     csehelp.py showall
+
 
