@@ -123,9 +123,12 @@ def helper_daemon(args):
 
             # Watch the status of any of our job requests
             status = jsondata["myjob"]
-            if myjob_old_status == "ready" and status == "responded":
-                new_info("Good news - your help request was accepted by user(s) %s" % jsondata["myjob"]["status"][2:])
-
+            if myjob_old_status != status and status not in ["ready","expired"]:
+                print "Accepted"
+                new_info("'Good news - your help request was accepted by user(s) %s'" % jsondata["myjob"])
+                
+            myjob_old_status = status
+            
             # Watch the status of new messages
             if "message" in jsondata and jsondata["message"] and jsondata["message"] != message:
                 message = jsondata["message"]
@@ -147,6 +150,13 @@ def respond(job):
         r = requests.post(SERVER, params=params)
     except requests.exceptions.RequestException:
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
+        
+    jsondata = r.json()
+    
+    if jsondata["status"] == "OK":
+        print "Response submitted. Go help that guy!"
+    else:
+        print "Sorry, response not accepted. Reason: %s" % jsondata["status"]
 
 def register(args):
     user, machine = get_info()
@@ -160,13 +170,14 @@ def register(args):
     except requests.exceptions.RequestException:
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
 
-    jsondata = r.json()
+    jsondata = r.json() 
     if jsondata["status"] == "OK":
         print "Registration accepted, thanks! \n\nTip: Make sure you have the daemon running to get notifications."
     else:
         print "Sorry, registration not accepted. Reason: %s" % jsondata["status"]
 
-
+def manual_respond(args):
+    respond(args.user)
 
 if __name__ == "__main__":
     desc = """
@@ -195,6 +206,10 @@ if __name__ == "__main__":
 
     showall_parser = subparsers.add_parser("showall", help="Display all current help requests")
     showall_parser.set_defaults(func=show_all)
+    
+    respond_parser = subparsers.add_parser("respond", help="Manually respond to a user's help request")
+    respond_parser.add_argument("user", metavar="USER", help="User's request to accept")
+    respond_parser.set_defaults(func=manual_respond)
 
     args = parser.parse_args()
     args.func(args)
