@@ -5,10 +5,10 @@ set -e # crash on errors
 if [ -f ~/.xprofile ]
 then
     echo "You already have a ~/.xprofile, appending to it."
-    echo "nohup python ~/cse-helpme/client/csehelp.py helper-daemon&" >> ~/.xprofile;
+    echo "nohup python ~/cse-helpme/client/csehelp.py helper-daemon > /dev/null 2>&1&" >> ~/.xprofile;
 else
     echo "#!/bin/sh" > ~/.xprofile;
-    echo "nohup python ~/cse-helpme/client/csehelp.py helper-daemon&" >> ~/.xprofile;
+    echo "nohup python ~/cse-helpme/client/csehelp.py helper-daemon > /dev/null 2>&1&" >> ~/.xprofile;
 fi
 
 chmod a+x ~/.xprofile
@@ -20,7 +20,7 @@ then
 fi
 ln -s ~/cse-helpme/client/csehelp.py ~/bin/csehelp.py
 
-nohup python ~/cse-helpme/client/csehelp.py helper-daemon&
+nohup python ~/cse-helpme/client/csehelp.py helper-daemon > /dev/null 2>&1&
 
 echo "**Successfully installed csehelpme daemon in ~/.xprofile - Please run the script with register to set yourself up as a helper";
 echo "See https://github.com/stanleyhon/cse-helpme for more information";
