@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import os
 import argparse
 import requests
 import subprocess
@@ -7,6 +7,7 @@ import time
 import sys
 
 SERVER = "http://www.cse.unsw.edu.au/~shon/cgi-bin/server.py"
+
 
 def request_help(args):
     user, machine = get_info()
@@ -59,16 +60,16 @@ def complete(args):
 
 
 def new_notification(jobid, course, location, description, jobsLeft):
-    # TODO: pull detailed information
-    message = "CSE-HELPME: " + job + " needs help with " + course + "@" + location + ":" + description
+    message = "CSE-HELPME: " + jobid + " needs help with " + course + "@" + location + " \\\"" + description + "\\\""
     if jobsLeft > 0:
         message = message + "\nYou have " + str(jobsLeft) + " more relevant jobs, dismiss to see next"
 
-    child = subprocess.Popen("echo -e " + message + "|xmessage -buttons dismiss:0,assist\ " + jobid + ":1 -file -")
-    returncode = child.returncode
-    if returncode is 1: # This guy wants to assist.
+
+    returncode = os.system( "echo -e \"" + message + "\"|xmessage -buttons dismiss:0,assist\\ " + jobid + ":1 -file -")
+    # don't know why return value is 1*256 but ok 
+    if returncode == 256: # This guy wants to assist.
         # TODO: Call assist on jobid
-        rubbish = 5
+        print "this guy wants to assist!"
 
 def helper_daemon(args):
     user, _ = get_info()
