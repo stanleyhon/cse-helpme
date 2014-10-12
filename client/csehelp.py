@@ -66,10 +66,14 @@ def new_notification(jobid, course, location, description, jobsLeft):
 
 
     returncode = os.system( "echo -e \"" + message + "\"|xmessage -buttons dismiss:0,assist\\ " + jobid + ":1 -file -")
-    # don't know why return value is 1*256 but ok 
+    # don't know why return value is 1*256 but ok
     if returncode == 256: # This guy wants to assist.
         # TODO: Call assist on jobid
         print "this guy wants to assist!"
+
+def new_info(message):
+    os.system("xmessage %s" % message)
+
 
 def helper_daemon(args):
     user, _ = get_info()
@@ -77,7 +81,9 @@ def helper_daemon(args):
     while True:
         seen_jobs = []
         fresh_jobs = []
-
+        all_jobs = []
+        myjob_old_status = ""
+        message = ""
 
         # Poll
         print >>sys.stderr, "Polling..."
@@ -93,20 +99,31 @@ def helper_daemon(args):
         jsondata = r.json()
         print jsondata
 
-        #if "status" in jsondata and jsondata["status"] is "OK":
+        if "status" in jsondata and jsondata["status"] == "OK":
+            # Keep track of fresh jobs and seen jobs
+            fresh_jobs = [job for job in jsondata["jobs"] if job["id"] not in seen_jobs]
+            seen_jobs = [job["id"] for job in jsondata["jobs"]]
 
+            process_jobs(fresh_jobs)
 
+            # Watch the status of any of our job requests
+            status = jsondata["myjob"]["status"]
+            if myjob_old_status == "ready" and status == "responded":
+                new_info("Good news - your help request was accepted by user(s) %s" % jsondata["myjob"]["status"][2:])
+
+            # Watch the status of new messages
+            if jsondata["message"] and jsondata["message"] != message:
+                message = jsondata["message"]
+                new_info(jsondata["messages"])
+
+        time.sleep(args.interval)
+
+def process_jobs(fresh_jobs):
         # TODO: database needs to provide us with jobid, course, description, etc
         # Received a poll response
-        seen_jobs = []
-        fresh_jobs = ["sgreen", "emmaw"]
-        for job in fresh_jobs:
-            if job not in seen_jobs:
-                seen_jobs.append (job)
 
-                # do a notification
-                new_notification (job, "COMP1917", "drum07", "really good", 5)
-        time.sleep(args.interval)
+        for i, job in enumerate(fresh_jobs):
+            new_notification(job["id"], job["course"], job["location"], job["description"], len(fresh_jobs) - (i+1))
 
 def register(args):
     user, machine = get_info()
