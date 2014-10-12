@@ -16,7 +16,8 @@ where they are and other useful information.
 
 Installing this system on your CSE account simply adds our script to your startup
 scripts (meaning it runs when you log in). The script polls our server periodically
-for anyone who needs help.
+for anyone who needs help. Additionally, it adds a symbolic link to your ~/bin folder
+so you can invoke the script directly.
 
 If you need help, you manually invoke the script and specify:
 1. the course you need help with
@@ -52,7 +53,7 @@ and the script will take care of the rest. For more information, see Requesting 
 
 If you need help, call the script like this:
 
-     python csehelp.py help COMP1917
+     csehelp.py help COMP1917
 
 You can also specify two other additional parameters:
  
@@ -60,17 +61,17 @@ Description is designed for you to provide some information (if desired) to peop
 Note you should try to avoid putting punctuation in the description unless you know how to 
 escape it properly.
      
-     python csehelp.py help COMP1917 --description "a description goes here"
+     csehelp.py help COMP1917 --description "a description goes here"
 
 Duration indicates how long you plan on having the help request be active. There is an upper limit of
 60 minutes, and the job will remove itself from the system after that time.
      
-     python csehelp.py help COMP1917 --duration 60
+     csehelp.py help COMP1917 --duration 60
 
 After someone has successfully helped you, or you no longer need help you can remove the job
 from the system by using the following command.
 
-     python csehelp.py helped
+     csehelp.py helped
 
 If you do not remove the job, people may still come and try to help you - but the job will eventually
 expire.
@@ -82,7 +83,7 @@ If you request help again, before your first job has expired, it will replace yo
 If you want to help people, make sure you install the script first, so you can receive
 notifications. Then you need to register with the system by typing the following command:
 
-     python csehelp.py register COMP1917 COMP1927 COMP2911 COMP3331 COMP3891 COMP1911 COMP1921
+     csehelp.py register COMP1917 COMP1927 COMP2911 COMP3331 COMP3891 COMP1911 COMP1921
 
 The courses we current support are:
 
