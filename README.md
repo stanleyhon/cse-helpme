@@ -14,7 +14,7 @@ for the cse hackathon
 1. git clone https://github.com/stanleyhon/cse-helpme.git
 2. Install python dependencies:
 3. 
-        $ pip install requests
+        $> pip install requests
       
 3. Create ~/.xprofile and add the following
 
@@ -23,7 +23,7 @@ for the cse hackathon
         
     Then execute
 
-        chmod 775 ~/.xprofile
+        $> chmod 775 ~/.xprofile
 
 4. Log out of your CSE account, then log back in!
 
