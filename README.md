@@ -137,6 +137,15 @@ Where user-id is the person who you want to help.
 
 4. Log out of your CSE account, then log back in!
 
+## Developer setup
+
+Use these instructions to setup your own database and server, note you will need to modify the 
+scripts in order to have them contact your server instead of the default hardcoded server.
+
+1. git clone the repo
+2. run make\_DB.py
+3. put cgi-bin files in cgi-bin for your webserver.
+
 ## Known bugs
 
 - You get notifications for your own help requests if you have stated you can help with that course
