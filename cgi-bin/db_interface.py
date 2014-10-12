@@ -60,10 +60,11 @@ def insert_new_job(job):
     global JOB_ID
     user_id = job[0]
     sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '"+user_id+"'"
-    print sql
     conn.execute(sql)
+    
+    job[4] = str(job[4])
     sql = "INSERT INTO JOB_QUEUE VALUES(NULL,datetime('now','localtime'),'"+"','".join(job)+"')"
-    print sql
+    
     conn.execute(sql)
     conn.commit()
     JOB_ID += 1
