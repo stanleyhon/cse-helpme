@@ -84,7 +84,6 @@ def show_all(args):
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
 
     jsondata = r.json()
-    print r.text
     if "jobs" in jsondata:
         for job in jsondata["jobs"]:
             print "- %s on %s wants help with %s" % (job["id"], job["location"], job["course"])

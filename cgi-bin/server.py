@@ -5,8 +5,6 @@ import json
 from db_interface import *
 cgitb.enable()
 
-#cgi.test()
-
 def statusOK ():
     response = {"status" : "OK"}
     print json.dumps(response)
@@ -32,7 +30,6 @@ else:
     response = {"status" : "ID Missing"}
     print json.dumps(response)
     exit()
-
 
 # --- HELP ---
 if form["action"].value == "help":
@@ -66,18 +63,18 @@ if form["action"].value == "help":
 elif form["action"].value == "poll":
     job_queue = get_job_queue_for_user(myid)
     relevant_jobs = []
-    
+
     #returns job queue in format: job_id|time_start|username|request_desc|course|location|time_length|active|responders
     for job in job_queue:
         info = job.split('|')
-               
+
         newjob = {"id" : info[2], "course" : info[4], "location" : info[5], "description" : info[3]}
         relevant_jobs.append (newjob)
-     
-    
-    myStatus = get_my_jobs_status (myid) 
-    
-    response = {"status" : "OK", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}  
+
+
+    myStatus = get_my_jobs_status (myid)
+
+    response = {"status" : "OK", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}
     print json.dumps(response)
 
 # --- START ---
@@ -96,8 +93,7 @@ elif form["action"].value == "start":
             exit()
 
     # All skills are valid
-    insert_new_user(myid,skills) #added by Brady
-
+    insert_new_user(myid,skills)
     statusOK()
 
 # --- RESPOND ---
@@ -114,29 +110,29 @@ elif form["action"].value == "respond":
         exit()
 
     job = form["job"].value
-    exists = check_Job_Queue_Job_Exists(job) #added by Brady
+    exists = check_job_queue_job_exists(job)
     if not exists:
         response = {"status" : "Can't find specified job"}
         print json.dumps(response)
         exit()
 
-    update_Job_Queue_Response(job,myid) #added by Brady
+    update_job_queue_response(job,myid) #added by Brady
     statusOK()
 
 # --- COMPLETE ---
 elif form["action"].value == "complete":
-    exists = check_Job_Queue_Job_Exists(myid)
+    exists = check_job_queue_job_exists(myid)
     if not exists:
         response = {"status" : "No Job to complete"}
         print json.dumps(response)
         exit()
 
-    update_Job_Queue_Queue_Complete(myid)
+    update_job_queue_queue_complete(myid)
 
     statusOK()
 else:
     response = {"status" : "Invalid action"}
     print json.dumps(response)
 
-    
+
 conn.close()

@@ -1,11 +1,8 @@
 #!/usr/bin/python
 
-
 import sqlite3
 
 conn = sqlite3.connect('helpMe_DB.db')
-
-JOB_ID = 200034
 
 #===Select * from table=====
 def get_users_table():
@@ -57,7 +54,6 @@ def deactivate_expired_jobs():
     
 #===Make New Job===
 def insert_new_job(job):
-    global JOB_ID
     user_id = job[0]
     sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '"+user_id+"'"
     conn.execute(sql)
@@ -67,7 +63,6 @@ def insert_new_job(job):
     
     conn.execute(sql)
     conn.commit()
-    JOB_ID += 1
 
 #===Get Job Queue for User===
 def get_job_queue_for_user(user_id):
@@ -99,7 +94,7 @@ def get_my_jobs_status(user_id):
         return status
     
 #===Check Job Exists===
-def check_Job_Queue_Job_Exists(job_user_id):
+def check_job_queue_job_exists(job_user_id):
     sql = """SELECT * FROM JOB_QUEUE
                 WHERE USERNAME = '""" + job_user_id + """'
                 AND ACTIVE = 'YES'"""
@@ -110,7 +105,7 @@ def check_Job_Queue_Job_Exists(job_user_id):
     return bool
 
 #===Update Job Queue Response===
-def update_Job_Queue_Response(job_user_id, user_id):
+def update_job_queue_response(job_user_id, user_id):
     sql = "SELECT RESPONDERS FROM JOB_QUEUE WHERE USERNAME = '" + job_user_id + "'AND ACTIVE = 'YES'"
     cursor = conn.execute(sql)
     status = ""
@@ -124,7 +119,7 @@ def update_Job_Queue_Response(job_user_id, user_id):
     conn.commit()    
 
 #===Complete Job===
-def update_Job_Queue_Queue_Complete(job_user_id):
+def update_job_queue_queue_complete(job_user_id):
     sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '" + job_user_id + "'"
     cursor = conn.execute(sql)
     conn.commit()    
