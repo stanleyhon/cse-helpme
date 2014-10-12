@@ -197,7 +197,7 @@ if __name__ == "__main__":
     helpedby_parser.set_defaults(func=complete)
 
     helperdaemon_parser = subparsers.add_parser("helper-daemon", help="Run the helper service")
-    helperdaemon_parser.add_argument("--interval", "-i", default=30, metavar="wait", type=int, help="Poll every _wait_ seconds")
+    helperdaemon_parser.add_argument("--interval", "-i", default=7, metavar="wait", type=int, help="Poll every _wait_ seconds")
     helperdaemon_parser.set_defaults(func=helper_daemon)
 
     helpedby_parser = subparsers.add_parser("register", help="Register as a helper")

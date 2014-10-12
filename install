@@ -20,5 +20,7 @@ then
 fi
 ln -s ~/cse-helpme/client/csehelp.py ~/bin/csehelp.py
 
+nohup python ~/cse-helpme/client/csehelp.py helper-daemon&
+
 echo "**Successfully installed csehelpme daemon in ~/.xprofile - Please run the script with register to set yourself up as a helper";
 echo "See https://github.com/stanleyhon/cse-helpme for more information";
