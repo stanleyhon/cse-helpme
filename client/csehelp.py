@@ -68,13 +68,13 @@ def new_notification(jobid, course, location, description, jobsLeft):
     returncode = os.system( "echo -e \"" + message + "\"|xmessage -buttons dismiss:0,assist\\ " + jobid + ":1 -file -")
     # don't know why return value is 1*256 but ok
     if returncode == 256: # This guy wants to assist.
-        # TODO: Call assist on jobid
         respond(jobid)
 
 def new_info(message):
     os.system("xmessage %s" % message)
 
 def show_all(args):
+    
     user, _ = get_info()
     params = {"action": "poll", "id": user}
     try:
@@ -84,7 +84,7 @@ def show_all(args):
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
 
     jsondata = r.json()
-
+    print r.text
     if "jobs" in jsondata:
         for job in jsondata["jobs"]:
             print "- %s on %s wants help with %s" % (job["id"], job["location"], job["course"])
@@ -119,11 +119,10 @@ def helper_daemon(args):
             fresh_jobs = [job for job in jsondata["jobs"] if job["id"] not in seen_jobs]
             seen_jobs = [job["id"] for job in jsondata["jobs"]]
 
-
             process_jobs(fresh_jobs)
 
             # Watch the status of any of our job requests
-            status = jsondata["myjob"]["status"]
+            status = jsondata["myjob"]
             if myjob_old_status == "ready" and status == "responded":
                 new_info("Good news - your help request was accepted by user(s) %s" % jsondata["myjob"]["status"][2:])
 
@@ -143,7 +142,7 @@ def process_jobs(fresh_jobs):
 
 def respond(job):
     user, _ = get_info()
-    params = {"action": "repond", "id": user, "job": job}
+    params = {"action": "respond", "id": user, "job": job}
     try:
         r = requests.post(SERVER, params=params)
     except requests.exceptions.RequestException:

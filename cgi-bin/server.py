@@ -71,13 +71,13 @@ elif form["action"].value == "poll":
     for job in job_queue:
         info = job.split('|')
                
-        newjob = {"id" : info[2], "course" : info[4], "Location" : info[5], "Description" : info[3]}
+        newjob = {"id" : info[2], "course" : info[4], "location" : info[5], "description" : info[3]}
         relevant_jobs.append (newjob)
      
     
     myStatus = get_my_jobs_status (myid) 
-            
-    response = {"status" : "ok", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : "", "location" : form["location"].value}  
+    
+    response = {"status" : "OK", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}  
     print json.dumps(response)
 
 # --- START ---
@@ -96,7 +96,6 @@ elif form["action"].value == "start":
             exit()
 
     # All skills are valid
-
     insert_new_user(myid,skills) #added by Brady
 
     statusOK()
@@ -126,14 +125,18 @@ elif form["action"].value == "respond":
 
 # --- COMPLETE ---
 elif form["action"].value == "complete":
-    exists = check_Job_Queue_Job_Exists(myId)
-    if exists is False:
+    exists = check_Job_Queue_Job_Exists(myid)
+    if not exists:
         response = {"status" : "No Job to complete"}
         print json.dumps(response)
         exit()
 
-    update_Job_Queue_Queue_Complete(myId)
+    update_Job_Queue_Queue_Complete(myid)
 
     statusOK()
+else:
+    response = {"status" : "Invalid action"}
+    print json.dumps(response)
+
     
 conn.close()

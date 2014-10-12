@@ -80,7 +80,8 @@ def get_job_queue_for_user(user_id):
                     AND ACTIVE = 'YES'"""
         cursor = conn.execute(sql)
         for row in cursor:
-            job_queue.append("|".join(str(row)))
+            #print "|".join(row)
+            job_queue.append("|".join([str(c) for c in row]))
     return job_queue
 
 #===Get my job status===
@@ -124,6 +125,6 @@ def update_Job_Queue_Response(job_user_id, user_id):
 
 #===Complete Job===
 def update_Job_Queue_Queue_Complete(job_user_id):
-    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '" + job_user_name + "'"
+    sql = "UPDATE JOB_QUEUE SET ACTIVE = 'NO' WHERE USERNAME = '" + job_user_id + "'"
     cursor = conn.execute(sql)
     conn.commit()    
