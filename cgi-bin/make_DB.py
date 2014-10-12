@@ -1,0 +1,37 @@
+#!/usr/bin/python
+
+import sqlite3
+
+conn = sqlite3.connect('helpMe_DB.db')
+
+conn.execute('''DROP TABLE IF EXISTS USERS''')
+conn.execute('''
+		CREATE TABLE IF NOT EXISTS USERS(
+		USERNAME 		TEXT PRIMARY KEY)''')
+
+conn.execute('''DROP TABLE IF EXISTS SKILLS''')
+conn.execute('''
+		CREATE TABLE IF NOT EXISTS SKILLS(
+		USERNAME 		TEXT	NOT NULL,
+		COURSE_HELP		TEXT	NOT NULL,
+		FOREIGN KEY(USERNAME)
+			REFERENCES USERS(USERNAME))''')
+			
+conn.execute('''DROP TABLE IF EXISTS JOB_QUEUE''')
+conn.execute('''
+		CREATE TABLE IF NOT EXISTS JOB_QUEUE(
+		JOB_ID					TEXT PRIMARY KEY NOT NULL,
+		TIME_START				DATETIME,
+		USERNAME 				TEXT,
+		REQUEST_DESCRIPTION	TEXT,
+		COURSE_NAME				TEXT,
+		LOCATION					TEXT,
+		TIME_LENGTH				TEXT,
+		ACTIVE					TEXT,
+		RESPONDERS				TEXT,
+		FOREIGN KEY(USERNAME)
+			REFERENCES USERS(USERNAME))''')
+			
+			
+print "database made";
+conn.close()

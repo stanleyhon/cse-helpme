@@ -2,6 +2,7 @@
 import cgi
 import cgitb
 import json
+import db_interface
 cgitb.enable()
 
 #cgi.test()
@@ -25,7 +26,6 @@ if "action" not in form:
     print json.dumps(response)
     exit()
 
-# TODO: Validate ID
 if "id" in form:
     myid = form["id"].value
 else:
@@ -59,18 +59,30 @@ if form["action"].value == "help":
         description = form["description"].value
     # We now have description in description
 
-    # DB insertion with all that stuff
-    # print "Your id is " + myid + ". Your course is " + course + ". Your duration is " + str(duration) + ". Your description is " + description + "."
+    #TODO change location
+    insert_new_job([myID,description,course,'drum08',duration,'YES','OK'])
+    print "Your id is " + myid + ". Your course is " + course + ". Your duration is " + str(duration) + ". Your description is " + description + "."
 
     statusOK()
 
 # --- POLL ---
 elif form["action"].value == "poll":
+    
+    job_queue = get_job_queue_for_user(myID)
+    relevant_jobs = []
+    
+    #returns job queue in format: job_id|time_start|username|request_desc|course|location|time_length|active|responders
+    for job in job_queue:
+        info = job.split('|')
+               
+        newjob = {"id" : info[2], "course" : info[4], "Location" : info[5], "Description" : info[3]}
+        relevant_jobs.append (newjob)
+     
+    
+    myStatus = sdaflkj()
+            
+    response = {"status" : "ok", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}  
 
-    # TODO: Look up skills of this guy
-    # TODO: Look up applicable jobs for this guy
-    # TODO: Send it
-    response = {"status" : "OK", "job1" : {"id" : "shon", "course" : "COMP1917", "expiry" : "136", "Location" : "drum07", "Description" : "im bad", "status" : "in progress"}}
     print json.dumps(response)
 
 # --- START ---
@@ -90,46 +102,43 @@ elif form["action"].value == "start":
 
     # All skills are valid
 
-    # TODO: Call DB new user with myid and skills
+    insert_new_user(myid,skills) #added by Brady
 
     statusOK()
 
 # --- RESPOND ---
 elif form["action"].value == "respond":
-    # TODO: Check this user already exists
     exists = True
     if not exists:
         response = {"status" : "Unknown responder"}
         print json.dumps(response)
         exit()
 
-    # TODO: Check who they're responding to
     if "job" not in form:
         response = {"status" : "Missing job"}
         print json.dumps(response)
         exit()
 
     job = form["job"].value
-    # TODO: Check to see if this job is in existance
-    exists = True
+    exists = check_Job_Queue_Job_Exists(job) #added by Brady
     if not exists:
         response = {"status" : "Can't find specified job"}
         print json.dumps(response)
         exit()
 
-    # TODO: mark job as responding
+    update_Job_Queue_Response(job,myID) #added by Brady
     statusOK()
 
 # --- COMPLETE ---
 elif form["action"].value == "complete":
-    # TODO: Check the user actually has a valid job
-    exists = True
+    exists = check_Job_Queue_Job_Exists(myId)
     if exists is False:
         response = {"status" : "No Job to complete"}
         print json.dumps(response)
         exit()
 
-    # TODO: Make database call to complete job.
+    update_Job_Queue_Queue_Complete(myId)
 
     statusOK()
-
+    
+conn.close()
