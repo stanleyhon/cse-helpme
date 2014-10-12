@@ -2,7 +2,7 @@
 import cgi
 import cgitb
 import json
-import db_interface
+from db_interface import *
 cgitb.enable()
 
 #cgi.test()
@@ -58,17 +58,13 @@ if form["action"].value == "help":
     if "description" in form:
         description = form["description"].value
     # We now have description in description
-
-    #TODO change location
-    insert_new_job([myID,description,course,'drum08',duration,'YES','OK'])
-    print "Your id is " + myid + ". Your course is " + course + ". Your duration is " + str(duration) + ". Your description is " + description + "."
+    insert_new_job([myid, description, course, form["location"].value, duration, 'YES', 'OK'])
 
     statusOK()
 
 # --- POLL ---
 elif form["action"].value == "poll":
-    
-    job_queue = get_job_queue_for_user(myID)
+    job_queue = get_job_queue_for_user(myid)
     relevant_jobs = []
     
     #returns job queue in format: job_id|time_start|username|request_desc|course|location|time_length|active|responders
@@ -79,9 +75,9 @@ elif form["action"].value == "poll":
         relevant_jobs.append (newjob)
      
     
-    myStatus = sdaflkj()
+    myStatus = get_my_jobs_status (myid) 
             
-    response = {"status" : "ok", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : ""}  
+    response = {"status" : "ok", "jobs" : relevant_jobs, "myjob" : myStatus, "messages" : "", "location" : form["location"].value}  
     print json.dumps(response)
 
 # --- START ---
@@ -125,7 +121,7 @@ elif form["action"].value == "respond":
         print json.dumps(response)
         exit()
 
-    update_Job_Queue_Response(job,myID) #added by Brady
+    update_Job_Queue_Response(job,myid) #added by Brady
     statusOK()
 
 # --- COMPLETE ---
