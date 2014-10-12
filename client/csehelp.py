@@ -44,6 +44,18 @@ def helped_by(args):
     # close a help request and store who completed it etc
     pass
 
+def new_notification(jobid, course, location, description, jobsLeft):
+    # TODO: pull detailed information
+    message = "CSE-HELPME: " + job + " needs help with " + course + "@" + location + ":" + description
+    if jobsLeft > 0:
+        message = message + "\nYou have " + str(jobsLeft) + " more relevant jobs, dismiss to see next"
+
+    child = subprocess.Popen("echo -e " + message + "|xmessage -buttons dismiss:0,assist\ " + jobid + ":1 -file -")
+    returncode = child.returncode
+    if returncode is 1: # This guy wants to assist.
+        # TODO: Call assist on jobid
+        rubbish = 5
+
 def helper_daemon(args):
     user, machine = get_info()
 
@@ -51,6 +63,17 @@ def helper_daemon(args):
 
         # Poll
         print >>sys.stderr, "Polling..."
+
+        # TODO: database needs to provide us with jobid, course, description, etc
+        # Received a poll response
+        seen_jobs = []
+        fresh_jobs = ["sgreen", "emmaw"]
+        for job in fresh_jobs:
+            if job not in seen_jobs:
+                seen_jobs.append (job)
+
+                # do a notification
+                new_notification (job, "COMP1917", "drum07", "really good", 5)
         time.sleep(args.interval)
 
 def register(args):
