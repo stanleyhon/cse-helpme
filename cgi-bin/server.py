@@ -35,7 +35,7 @@ else:
 
 
 # --- HELP ---
-if form["action"].value == "help":    
+if form["action"].value == "help":
     # Ensure course is legit
     if form["course"].value not in courses:
         response = {"status" : "Invalid course"}
@@ -60,13 +60,13 @@ if form["action"].value == "help":
     # We now have description in description
 
     # DB insertion with all that stuff
-    print "Your id is " + myid + ". Your course is " + course + ". Your duration is " + str(duration) + ". Your description is " + description + "."
+    # print "Your id is " + myid + ". Your course is " + course + ". Your duration is " + str(duration) + ". Your description is " + description + "."
 
     statusOK()
 
 # --- POLL ---
 elif form["action"].value == "poll":
-    
+
     # TODO: Look up skills of this guy
     # TODO: Look up applicable jobs for this guy
     # TODO: Send it
@@ -87,7 +87,7 @@ elif form["action"].value == "start":
             response = {"status" : "Invalid skill"}
             print json.dumps(response)
             exit()
-    
+
     # All skills are valid
 
     # TODO: Call DB new user with myid and skills
@@ -129,7 +129,7 @@ elif form["action"].value == "complete":
         print json.dumps(response)
         exit()
 
-    # TODO: Make database call to complete job. 
+    # TODO: Make database call to complete job.
 
     statusOK()
-    
+

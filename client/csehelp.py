@@ -20,13 +20,12 @@ def request_help(args):
         r = requests.post(SERVER, params=params)
     except requests.exceptions.RequestException:
         exit("Something went wrong and we couldn't connect to the server, sorry :(")
-    print r.text
 
-    #jsondata = r.json()
-    #if jsondata["status"] == "OK":
-    #    print "Help request submitted."
-    #else:
-    #    print "Sorry, help request not accepted. Reason: %s" % jsondata["status"]
+    jsondata = r.json()
+    if jsondata["status"] == "OK":
+        print "Help request submitted."
+    else:
+        print "Sorry, help request not accepted. Reason: %s" % jsondata["status"]
 
 def get_info():
     user = run_command("whoami").strip()
@@ -41,9 +40,24 @@ def run_command(command):
     child = subprocess.Popen(command, stdout=subprocess.PIPE)
     return child.communicate()[0]
 
-def helped_by(args):
-    # close a help request and store who completed it etc
-    pass
+def complete(args):
+    # close a help request
+
+    user, _ = get_info()
+
+    params = {"action": "complete", "id": user}
+
+    try:
+        r = requests.post(SERVER, params=params)
+    except requests.exceptions.RequestException:
+        exit("Something went wrong and we couldn't connect to the server, sorry :(")
+
+    jsondata = r.json()
+    if jsondata["status"] == "OK":
+        print "Request closed. Have a nice day :)"
+    else:
+        print "Sorry, request not closed. Reason: %s" % jsondata["status"]
+
 
 def new_notification(jobid, course, location, description, jobsLeft):
     message = "CSE-HELPME: " + jobid + " needs help with " + course + "@" + location + " \\\"" + description + "\\\""
@@ -52,36 +66,70 @@ def new_notification(jobid, course, location, description, jobsLeft):
 
 
     returncode = os.system( "echo -e \"" + message + "\"|xmessage -buttons dismiss:0,assist\\ " + jobid + ":1 -file -")
-    # don't know why return value is 1*256 but ok 
+    # don't know why return value is 1*256 but ok
     if returncode == 256: # This guy wants to assist.
         # TODO: Call assist on jobid
         print "this guy wants to assist!"
 
+def new_info(message):
+    os.system("xmessage %s" % message)
+
+
 def helper_daemon(args):
-    user, machine = get_info()
+    user, _ = get_info()
 
     while True:
+        seen_jobs = []
+        fresh_jobs = []
+        all_jobs = []
+        myjob_old_status = ""
+        message = ""
 
         # Poll
         print >>sys.stderr, "Polling..."
 
+        params = {"action": "poll", "id": user}
+        try:
+            r = requests.get(SERVER, params=params)
+        except requests.exceptions.RequestException:
+            # Don't exit the daemon, just fail silently
+            pass
+
+        print >>sys.stderr, "Received data:"
+        jsondata = r.json()
+        print jsondata
+
+        if "status" in jsondata and jsondata["status"] == "OK":
+            # Keep track of fresh jobs and seen jobs
+            fresh_jobs = [job for job in jsondata["jobs"] if job["id"] not in seen_jobs]
+            seen_jobs = [job["id"] for job in jsondata["jobs"]]
+
+            process_jobs(fresh_jobs)
+
+            # Watch the status of any of our job requests
+            status = jsondata["myjob"]["status"]
+            if myjob_old_status == "ready" and status == "responded":
+                new_info("Good news - your help request was accepted by user(s) %s" % jsondata["myjob"]["status"][2:])
+
+            # Watch the status of new messages
+            if jsondata["message"] and jsondata["message"] != message:
+                message = jsondata["message"]
+                new_info(jsondata["messages"])
+
+        time.sleep(args.interval)
+
+def process_jobs(fresh_jobs):
         # TODO: database needs to provide us with jobid, course, description, etc
         # Received a poll response
-        seen_jobs = []
-        fresh_jobs = ["sgreen", "emmaw"]
-        for job in fresh_jobs:
-            if job not in seen_jobs:
-                seen_jobs.append (job)
 
-                # do a notification
-                new_notification (job, "COMP1917", "drum07", "really good", 5)
-        time.sleep(args.interval)
+        for i, job in enumerate(fresh_jobs):
+            new_notification(job["id"], job["course"], job["location"], job["description"], len(fresh_jobs) - (i+1))
 
 def register(args):
     user, machine = get_info()
     print "Registering your specialties..."
 
-    courses = ",".join(args.courses)
+    courses = ",".join(args.courses).upper()
 
     params = {"action": "start", "id": user, "skills": courses}
     try:
@@ -110,9 +158,9 @@ if __name__ == "__main__":
     help_parser.add_argument("--description", "-d", metavar="\"<text>\"", default="", help="Short description (to pass to your helpers)")
     help_parser.set_defaults(func=request_help)
 
-    helpedby_parser = subparsers.add_parser("helpedby", help="Tell us who helped you out!")
-    helpedby_parser.add_argument("user", metavar="USER", help="The user who helped you")
-    helpedby_parser.set_defaults(func=helped_by)
+    helpedby_parser = subparsers.add_parser("helped", help="Close your help request")
+    # helpedby_parser.add_argument("user", metavar="USER", help="The user who helped you")
+    helpedby_parser.set_defaults(func=complete)
 
     helperdaemon_parser = subparsers.add_parser("helper-daemon", help="Run the helper service")
     helperdaemon_parser.add_argument("--interval", "-i", default=30, metavar="wait", type=int, help="Poll every _wait_ seconds")
