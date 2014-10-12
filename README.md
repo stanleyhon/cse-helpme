@@ -1,6 +1,13 @@
 cse-helpme
 ==========
 
+## Disclaimer
+
+This is likely fairly bug-ridden, report bugs to shon@cse.unsw.edu.au and we'll fix em some time.
+
+This system also is not particularly secure, there is no real personal information or anything 
+of value worth stealing - but you could make it hard for people to find help or provide it.
+
 ## Overview
 
 cse-helpme connects people with help with a CSE course in the labs.
