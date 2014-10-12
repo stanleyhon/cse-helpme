@@ -41,6 +41,16 @@ which responds with JSON objects which the client script interprets.
 
 It uses environment variables to figure out who you are, and where you are at CSE.
 
+## I'm a judge and I want to demo this
+
+Hi there! You can't test this on your own because the system is designed not to show you your own requests. Here's what you'll need to do.
+0. Find at least one friend. Good luck. (If you can't do this, then you will need several CSE accounts)
+1. Be at CSE, on lab machines.
+2. Each person should run install steps as below.
+3. Register your specialities with the script (also below).
+4. Get someone to request help and watch as notifications come in! You can respond to those notifications using the buttons that pop up, and the student-in-distress should receive a notification back.
+5. Give all prizes to Brady, Stanley and Shannon.
+
 ## Install (RECOMMENDED)
 
 1. cd ~
