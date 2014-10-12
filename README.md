@@ -59,10 +59,12 @@ You can also specify two other additional parameters:
 Description is designed for you to provide some information (if desired) to people responding.
 Note you should try to avoid putting punctuation in the description unless you know how to 
 escape it properly.
+     
      python csehelp.py help COMP1917 --description "a description goes here"
 
 Duration indicates how long you plan on having the help request be active. There is an upper limit of
 60 minutes, and the job will remove itself from the system after that time.
+     
      python csehelp.py help COMP1917 --duration 60
 
 After someone has successfully helped you, or you no longer need help you can remove the job
