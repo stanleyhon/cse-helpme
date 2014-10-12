@@ -122,11 +122,8 @@ Where user-id is the person who you want to help.
 ## Manual install (ADVANCED)
 
 1. git clone https://github.com/stanleyhon/cse-helpme.git
-2. Install python dependencies:
-3. 
-        $> pip install --user requests
       
-3. Create ~/.xprofile and add the following
+2. Create ~/.xprofile and add the following
 
         #!/bin/sh
         nohup python ~/cse-helpme/client/csehelp.py helper-daemon&
@@ -145,6 +142,11 @@ scripts in order to have them contact your server instead of the default hardcod
 1. git clone the repo
 2. run make\_DB.py
 3. put cgi-bin files in cgi-bin for your webserver.
+
+## Stuff we would have done if we had time
+- Be smarter about notifications; only notify people in nearby labs
+- Game mechanics (earn points for helping people. Compete!)
+- Security
 
 ## Known bugs
 
