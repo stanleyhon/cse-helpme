@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import re
 import cgi
 import cgitb
 import json
@@ -39,6 +40,11 @@ if "action" not in form:
 
 if "id" in form:
     myid = form["id"].value
+    check = re.match ('^[A-Za-z0-9]+$', myid)
+    if check is None: # Their id is invalid
+        response = {"status" : "Invalid ID, only alphanumeric is allowed"}
+        print json.dumps(response)
+        exit()
 else:
     response = {"status" : "ID Missing"}
     print json.dumps(response)
@@ -66,6 +72,11 @@ if form["action"].value == "help":
     # We now have duration in minutes in the variable 'duration'
     description = ""
     if "description" in form:
+        check = re.match('^[A-Za-z0-9\s]+$', form["description"].value)
+        if check is None: # There are other things in the description
+            response = {"status" : "Description invalid, only alphanumeric and spaces allowed"}
+            print json.dumps(response)
+            exit()
         description = form["description"].value
     # We now have description in description
     insert_new_job([myid, description, course, form["location"].value, duration, 'YES', 'OK'])
