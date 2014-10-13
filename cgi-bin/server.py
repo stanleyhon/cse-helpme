@@ -58,6 +58,7 @@ if form["action"].value == "help":
         print json.dumps(response)
         exit()
     course = form["course"].value
+
     # Ensure duration is legit
     try:
         duration = int(form["duration"].value)
@@ -79,7 +80,18 @@ if form["action"].value == "help":
             exit()
         description = form["description"].value
     # We now have description in description
-    insert_new_job([myid, description, course, form["location"].value, duration, 'YES', 'OK'])
+    
+# Check location is alphanumeric (credit:mitchward)
+    # Note location is always (in theory) going to be included by the client so its probably OK
+    # to crash if it ain't included.
+    location = form["location"].value
+    check = re.match ('^[A-Za-z0-9]+$', location)
+    if check is None: # there's weird shit in the location
+        response = {"status" : "Invalid location"}
+        print json.dumps(response)
+        exit()
+
+    insert_new_job([myid, description, course, location, duration, 'YES', 'OK'])
 
     statusOK()
 
